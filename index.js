@@ -1,49 +1,46 @@
-const express = require('express');
-const app = express();
+const express = require('express'),
+bodyParser = require('body-parser'),
+uuid = require('uuid'),
 morgan = require('morgan');
 
+const app = express();
+
+app.use(bodyParser.json());
 
 
-let topMovies = [
+
+let Movies = [
     {
-        title: 'The Witch',
-        director: 'Robert Eggers'
+        Title: 'The Witch',
+        Director: 'Robert Eggers'
     },
     {
-        title: 'Uncut Gems',
-        directors: 'Josh Safdie, Benny Safdie'
+        Title: 'Sicario',
+        Director: 'Denis Villeneuve'
     },
     {
-        title: 'Sicario',
-        director: 'Denis Villeneuve'
+        Title: 'Pulp Fiction',
+        Director: 'Quentin Tarantino'
     },
     {
-        title: 'Pulp Fiction',
-        director: 'Quentin Tarantino'
+        Title: 'Full Metal Jacket',
+        Director: 'Stanley Kubrick'
     },
     {
-        title: 'Full Metal Jacket',
-        director: 'Stanley Kubrick'
+        Title: 'Casino',
+        Director: 'Martin Scorsese'
     },
     {
-        title: 'Casino',
-        director: 'Martin Scorsese'
+        Title: 'Dead Man\'s Shoes',
+        Director: 'Shane Meadows' 
     },
     {
-        title: 'Dead Man\'s Shoes',
-        director: 'Shane Meadows' 
+        Title: 'Blue Ruin',
+        Director: 'Jeremy Saulnier'
     },
     {
-        title: 'Blue Ruin',
-        director: 'Jeremy Saulnier'
-    },
-    {
-        title: 'No Country for Old Men',
-        directors: 'Joel Coen, Ethan Coen'
-    },
-    {
-        title: 'Dumb and Dumber',
-        director: 'Peter Farrelly'
+        Title: 'Dumb and Dumber',
+        Director: 'Peter Farrelly'
     }
 ];
 
@@ -56,8 +53,45 @@ app.get('/', (req, res) => {
 });
 
 app.get('/movies', (req, res) => {
-    res.json(topMovies);
+    res.send('Successful GET request returns a list all movies')
 });
+
+app.get('/movies/:Title', (req, res) => {
+    res.send('Successful GET request returning data on a single movie by title');
+});
+
+app.get('/movies/genre/:Name', (req, res) => {
+    res.send('Successful GET request returning data on a genre by title');
+});
+
+app.get('/movies/director/:Name', (req, res) => {
+    res.send('Successful GET request returning data on a director by name');
+});
+
+app.post('/movies', (req, res) => {
+    res.send('Successful POST request allows users to add a movie to the database');
+});
+
+app.post('/users', (req, res) => {
+    res.send('Successful POST request allows new users to register');
+});
+
+app.put('/users/:Username', (req, res) => {
+    res.send('Successful PUT request allows users to update their user info');
+});
+
+app.post('/users/:id/:favorites', (req, res) => {
+    res.send('Successful POST request allows users to add a movie to their favorites');
+});
+
+app.delete('/users/:id/:favorites', (req, res) => {
+    res.send('Successful DELETE request allows users to remove a movie from their favorites');
+});
+
+app.delete('/users/:Username', (req, res) => {
+    res.send('Successful DELETE request allows existing users to deregister');
+});
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
