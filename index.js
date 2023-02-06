@@ -1,44 +1,62 @@
 const express = require('express'),
 bodyParser = require('body-parser'),
 morgan = require('morgan');
+uuid = require('uuid')
+
 const app = express();
 
 app.use(bodyParser.json());
 
 
 
-let Movies = [
+let movies = [
     {
-        Title: 'The Witch',
-        Director: 'Robert Eggers'
+        title: 'The Witch',
+        director: 'Robert Eggers',
+        genre: 'Folk Horror'
     },
     {
-        Title: 'Sicario',
-        Director: 'Denis Villeneuve'
+        title: 'Sicario',
+        director: 'Denis Villeneuve',
+        genre: 'Action-thriller'
     },
     {
-        Title: 'Pulp Fiction',
-        Director: 'Quentin Tarantino'
+        title: 'Pulp Fiction',
+        director: 'Quentin Tarantino',
+        genre: 'Crime film'
     },
     {
-        Title: 'Full Metal Jacket',
-        Director: 'Stanley Kubrick'
+        title: 'Full Metal Jacket',
+        director: 'Stanley Kubrick',
+        genre: 'War drama'
     },
     {
-        Title: 'Casino',
-        Director: 'Martin Scorsese'
+        title: 'Casino',
+        director: 'Martin Scorsese',
+        genre: 'Epic crime'
     },
     {
-        Title: 'Dead Man\'s Shoes',
-        Director: 'Shane Meadows' 
+        title: 'Dead Man\'s Shoes',
+        director: 'Shane Meadows',
+        genre:'Psychological thriller'
     },
     {
-        Title: 'Blue Ruin',
-        Director: 'Jeremy Saulnier'
+        title: 'Blue Ruin',
+        director: 'Jeremy Saulnier',
+        genre: 'Thriller film'
     },
     {
-        Title: 'Dumb and Dumber',
-        Director: 'Peter Farrelly'
+        title: 'Dumb and Dumber',
+        director: 'Peter Farrelly',
+        genre: 'Buddy film'
+    }
+];
+
+let users = [
+    {
+        username: 'Peter Müller',
+        id: 2,
+        favorites: [] 
     }
 ];
 
@@ -51,27 +69,48 @@ app.get('/', (req, res) => {
 });
 
 app.get('/movies', (req, res) => {
-    res.send('Successful GET request returns a list all movies')
+    res.send(movies)
 });
 
-app.get('/movies/:Title', (req, res) => {
-    res.send('Successful GET request returning data on a single movie by title');
+app.get('/movies/:title', (req, res) => {
+    res.json(movies.find((movie) =>  
+    { return movie.title === req.params.title }));
 });
 
-app.get('/movies/genre/:Name', (req, res) => {
-    res.send('Successful GET request returning data on a genre by title');
+app.get('/movies/genre/:name', (req, res) => {
+    res.json(movies.find((movie) =>
+    { return movie.genre === req.params.name}));
 });
 
-app.get('/movies/director/:Name', (req, res) => {
-    res.send('Successful GET request returning data on a director by name');
+app.get('/movies/director/:name', (req, res) => {
+    res.json(movies.find((movie) =>
+    { return movie.director === req.params.name}));
 });
 
 app.post('/movies', (req, res) => {
-    res.send('Successful POST request allows users to add a movie to the database');
+    let newMovie = req.body;
+
+    if(!newMovie.title) {
+        const message = 'Missing title in request body';
+        res.status(400).send(message);
+    } else {
+        newMovie.id = uuid.v4();
+        movies.push(newMovie);
+        res.status(201).send(newMovie);
+    }
 });
 
 app.post('/users', (req, res) => {
-    res.send('Successful POST request allows new users to register');
+    let newUser = req.body;
+
+    if (!newUser.username) {
+        const message = 'Missing username in request body';
+        res.status(400).send(message);
+    } else {
+        newUser.id = uuid.v4();
+        users.push(newUser);
+        rest.status(201).send(newUser);
+    }
 });
 
 app.put('/users/:Username', (req, res) => {
@@ -89,7 +128,6 @@ app.delete('/users/:id/:favorites', (req, res) => {
 app.delete('/users/:Username', (req, res) => {
     res.send('Successful DELETE request allows existing users to deregister');
 });
-
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
