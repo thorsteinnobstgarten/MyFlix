@@ -11,9 +11,13 @@ app.use(bodyParser.json());
 
 let movies = [
     {
-        title: 'The Witch',
-        director: 'Robert Eggers',
-        genre: 'Folk Horror'
+        "Title":"House",
+        "Director": {
+            "Name":"Peter Meier"
+       },
+        "Genre": {
+            "Name":"Horror"
+        } 
     },
     {
         title: 'Sicario',
@@ -43,22 +47,24 @@ let movies = [
     {
         title: 'Blue Ruin',
         director: 'Jeremy Saulnier',
-        genre: 'Thriller film'
+        genre: 'Thriller film',
+        movieID: 2
     },
     {
         title: 'Dumb and Dumber',
         director: 'Peter Farrelly',
-        genre: 'Buddy film'
+        genre:  'Buddy film',
+        movieID: "0001"
     }
 ];
 
 let users = [
     {
-        username: 'Peter Müller',
-        id: 2,
-        favorites: [] 
+        id: 1,
+        name: "Kim",
+        favoriteMovies: []
     }
-];
+]
 
 app.use(express.static('public'));
 
@@ -69,64 +75,119 @@ app.get('/', (req, res) => {
 });
 
 app.get('/movies', (req, res) => {
-    res.send(movies)
+   res.status(200).json(movies);
 });
 
 app.get('/movies/:title', (req, res) => {
-    res.json(movies.find((movie) =>  
-    { return movie.title === req.params.title }));
+    const { title } = req.params;
+    const movie = movies.find( movie => movie.Title === title );
+
+    if (movie) {
+        res.status(200).json(movie);
+    } else {
+        res.status(400).send('no such movie')
+    }
 });
 
-app.get('/movies/genre/:name', (req, res) => {
-    res.json(movies.find((movie) =>
-    { return movie.genre === req.params.name}));
+app.get('/movies/genre/:genreName', (req, res) => {
+    const { genreName } = req.params;
+    const genre = movies.find( movie => movie.Genre.Name === genreName );
+
+    if (genre) {
+        res.status(200).json(genre);
+    } else {
+        res.status(400).send('no such genre')
+    }
 });
 
-app.get('/movies/director/:name', (req, res) => {
-    res.json(movies.find((movie) =>
-    { return movie.director === req.params.name}));
+app.get('/movies/director/:directorName', (req, res) => {
+    const { directorName } = req.params;
+    const director = movies.find( movie => movie.Director.Name === directorName );
+
+    if (director) {
+        res.status(200).json(director);
+    } else {
+        res.status(400).send('no such genre')
+    }
+    
+    
 });
 
 app.post('/movies', (req, res) => {
-    let newMovie = req.body;
+    const newMovie = req.body;
 
-    if(!newMovie.title) {
-        const message = 'Missing title in request body';
-        res.status(400).send(message);
-    } else {
+    if(newMovie.title) {
         newMovie.id = uuid.v4();
         movies.push(newMovie);
         res.status(201).send(newMovie);
+    } else {
+        res.status(400).send('movies need titles')
     }
 });
 
 app.post('/users', (req, res) => {
-    let newUser = req.body;
+  const newUser = req.body;
 
-    if (!newUser.username) {
-        const message = 'Missing username in request body';
-        res.status(400).send(message);
+  if (newUser.name) {
+    newUser.id = uuid.v4();
+    users.push(newUser);
+    res.status(201).json(newUser)
+  } else {
+    res.status(400).send('users need names')
+  }
+});
+
+app.put('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const updatedUser = req.body;
+
+    let user = users.find( user => user.id == id );
+
+    if (user) {
+        user.name = updatedUser.name;
+        res.status(200).json(user)
     } else {
-        newUser.id = uuid.v4();
-        users.push(newUser);
-        rest.status(201).send(newUser);
+        res.status(400).send('no such user')
     }
 });
 
-app.put('/users/:Username', (req, res) => {
-    res.send('Successful PUT request allows users to update their user info');
+app.post('/users/:id/:movieTitle', (req, res) => {
+    const { id, movieTitle } = req.params;
+
+    let user = users.find( user => user.id == id );
+
+    if (user) {
+    user.favoriteMovies.push(movieTitle);
+    res.status(200).send(`${movieTitle} has been added to user ${id}'s array`);
+    } else {
+        res.status(400).send('no such user')
+    }
+    });
+
+app.delete('/users/:id/:movieTitle', (req, res) => {
+    const { id, movieTitle } = req.params;
+
+    let user = users.find( user => user.id == id );
+
+    if (user) {
+    user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle );
+    res.status(200).send(`${movieTitle} has been removed from user ${id}'s array`);
+    } else {
+      res.status(400).send('no such user')
+    }
 });
 
-app.post('/users/:id/:favorites', (req, res) => {
-    res.send('Successful POST request allows users to add a movie to their favorites');
-});
+app.delete('/users/:id', (req, res) => {
+    const { id } = req.params;
 
-app.delete('/users/:id/:favorites', (req, res) => {
-    res.send('Successful DELETE request allows users to remove a movie from their favorites');
-});
+    let user = users.find( user => user.id == id );
 
-app.delete('/users/:Username', (req, res) => {
-    res.send('Successful DELETE request allows existing users to deregister');
+    if (user) {
+    users = users.filter( user => user.id != id );
+    res.status(200).send(`user ${id} has been deleted`);
+    } else {
+      res.status(400).send('no such user')
+    }
 });
 
 app.use((err, req, res, next) => {
