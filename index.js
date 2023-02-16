@@ -11,7 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', 
+mongoose.connect('mongodb://127.0.0.1:27017/myFlixDB', 
 { useNewUrlParser: true, useUnifiedTopology: true });
 
 
