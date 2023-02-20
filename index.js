@@ -11,6 +11,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
+let auth = require('./auth')(app);
+const passport = require('passport');
+const { findLastIndex } = require('lodash');
+require('./passport'); 
+
 mongoose.connect('mongodb://127.0.0.1:27017/myFlixDB', 
 { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -144,7 +149,8 @@ app.delete('/users/:Username', (req, res) => {
 
 
 
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: findLastIndex}),
+ (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(200).json(movies);
