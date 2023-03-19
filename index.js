@@ -10,7 +10,7 @@ const app = express();
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
-let allowedOrigins = ['http://127.0.0.1:8080', 'http://testsite.com'];
+let allowedOrigins = ['http://127.0.0.1:8080', 'http://testsite.com', 'http://127.0.0.1:1234'];
 
 app.use(cors({
   origin: (origin, callback) => {
