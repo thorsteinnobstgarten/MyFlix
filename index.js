@@ -191,7 +191,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), 
 
 
 
-app.get('/movies', 
+app.get('/movies', (req,res) => {
   Movies.find()
     .then((movies) => {
       res.status(200).json(movies);
@@ -199,8 +199,8 @@ app.get('/movies',
     .catch((err) => {
       console.error(err);
       res.status(500).send('Error: ' + err);
-    });
-});  
+    })
+  });  
 
 
 
