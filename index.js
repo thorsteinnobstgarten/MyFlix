@@ -191,6 +191,10 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), 
 
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 app.get('/movies',
  (req, res) => {
   Movies.find()
