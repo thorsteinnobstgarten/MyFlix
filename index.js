@@ -192,7 +192,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), 
 
 
 
-app.get('/movies', passport.authenticate('jwt', { session: false }),
+app.get('/movies',
  (req, res) => {
   Movies.find()
     .then((movies) => {
