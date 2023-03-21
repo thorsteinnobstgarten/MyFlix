@@ -10,7 +10,7 @@ const app = express();
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234'];
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'https://meineflix.herokuapp.com'];
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
